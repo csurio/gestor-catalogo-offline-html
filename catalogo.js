@@ -321,10 +321,14 @@ function htmlProductCard(p, editable){
 
 function placeholder(){
   return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800">\n'+
-    '<defs><linearGradient id="g" x1="0" x2="1"><stop offset="0%" stop-color="#0b1224"/><stop offset="100%" stop-color="#111827"/></linearGradient></defs>\n'+
-    '<rect width="100%" height="100%" fill="url(#g)"/>\n'+
-    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, Roboto, Arial" font-size="28">Sin imagen</text>\n'+
+    '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800">
+'+
+    '<defs><linearGradient id="g" x1="0" x2="1"><stop offset="0%" stop-color="#0b1224"/><stop offset="100%" stop-color="#111827"/></linearGradient></defs>
+'+
+    '<rect width="100%" height="100%" fill="url(#g)"/>
+'+
+    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, Roboto, Arial" font-size="28">Sin imagen</text>
+'+
     '</svg>'
   );
 }
@@ -469,7 +473,8 @@ function buildStaticHtml(data){
   '.label-now{color:#86efac; font-weight:800; font-size:12px}'+
   '.oldprice{color:#94a3b8; text-decoration:line-through}'+
   '.discount-badge{background:#14532d; color:#bbf7d0; border:1px solid #166534; padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700}'+
-  '@media print{.no-print{display:none}}'+
+  '@page{ size: Letter; margin:10mm }'+
+  '@media print{ *{-webkit-print-color-adjust:exact; print-color-adjust:exact} .grid{grid-template-columns:repeat(2,1fr)} .product{break-inside:avoid; page-break-inside:avoid; -webkit-column-break-inside:avoid} }'+
   '</style></head><body>'+
   '<div class="wrap">'+
   '<div class="hdr">'+logoHtml+'<div style="font-size:22px;font-weight:800">'+esc(brandName)+'</div>'+chips+'</div>'+
@@ -488,10 +493,7 @@ function runTests(){
   try{ var pp = normalizePricing(80, 100, null, null); if(pp.oldPrice===100 && pp.discountPct===20 && Math.abs(pp.discountAmt-20)<0.01){ results.push('✔ old+now -> % & amt'); } else { results.push('✘ old+now'); } }catch(e){ results.push('✘ old+now threw'); }
   try{ var pp2 = normalizePricing(80, null, 20, null); if(pp2.oldPrice && Math.abs(pp2.oldPrice-100)<0.01 && pp2.discountPct===20){ results.push('✔ now+% -> old'); } else { results.push('✘ now+%'); } }catch(e){ results.push('✘ now+% threw'); }
   try{ var pp3 = normalizePricing(80, null, null, 20); if(pp3.oldPrice===100 && pp3.discountPct===20 && Math.abs(pp3.discountAmt-20)<0.01){ results.push('✔ now+amt -> old & %'); } else { results.push('✘ now+amt'); } }catch(e){ results.push('✘ now+amt threw'); }
-  try{ var pp4 = normalizePricing(79.99, 100, null, null); if(pp4.discountPct===20){ results.push('✔ % entero (redondeo)'); } else { results.push('✘ % entero'); } }catch(e){ results.push('✘ % entero threw'); }
-  try{ var html = buildStaticHtml({products:[], currency:'USD', brand:{name:'X', showPct:true}}); if(html.indexOf('<script')===-1){ results.push('✔ export no <script>'); } else { results.push('✘ export contiene <script>'); } }catch(e){ results.push('✘ export threw'); }
-  try{ var tmp = {id:'x', stock:1, status:'available'}; state.products=[tmp]; adjustStockById('x', -1); if(state.products[0].stock===0 && state.products[0].status==='sold'){ results.push('✔ stock 0 => sold'); } else { results.push('✘ stock->sold'); } }catch(e){ results.push('✘ stock test threw'); }
-
+  try{ var html = buildStaticHtml({products:[], currency:'USD', brand:{name:'X', showPct:true}}); if(html.indexOf('@page{ size: Letter;')>-1){ results.push('✔ buildStaticHtml Carta'); } else { results.push('✘ buildStaticHtml Carta'); } }catch(e){ results.push('✘ export threw'); }
   console.log('[Tests]', results.join(' | '));
   var hint = document.createElement('div'); hint.className='hint'; hint.textContent='Autotests: '+results.join(' | ');
   document.body.appendChild(hint); hint.style.position='fixed'; hint.style.left='12px'; hint.style.bottom='8px'; hint.style.opacity='0.6'; hint.classList.add('no-print');

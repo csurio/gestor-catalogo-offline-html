@@ -55,8 +55,10 @@ function save(){
 function fmtPrice(n){
   var map = { USD: {symbol:'$'}, EUR:{symbol:'€'}, SVC:{symbol:'₡'}, MXN:{symbol:'$'} };
   var sym = (map[state.currency] && map[state.currency].symbol) ? map[state.currency].symbol : '$';
-  var num = Number(n||0);
-  return sym + num.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
+  var num = Number.isFinite(Number(n)) ? Number(n) : 0;
+  // Formato determinista: siempre punto decimal y 2 dígitos
+  var s = num.toFixed(2);
+  return sym + s;
 }
 
 function uid(){ return Math.random().toString(36).slice(2)+Date.now().toString(36); }
@@ -309,9 +311,9 @@ function htmlProductCard(p, editable){
     html += '<button class="btn btn-danger" data-action="del" data-id="'+p.id+'">Eliminar</button>';
     html += '<button class="btn btn-accent" data-action="toggleSold" data-id="'+p.id+'">'+(p.status==='sold'?'Marcar disponible':'Marcar vendido')+'</button>';
     html += '<div style="margin-left:auto; display:flex; gap:6px; align-items:center">'+
-            '<span class="muted">Stock</span>'+ 
-            '<button class="btn btn-ghost btn-sm" data-action="stockMinus" data-id="'+p.id+'">−</button>'+ 
-            '<button class="btn btn-ghost btn-sm" data-action="stockPlus" data-id="'+p.id+'">+</button>'+ 
+            '<span class="muted">Stock</span>'+
+            '<button class="btn btn-ghost btn-sm" data-action="stockMinus" data-id="'+p.id+'">−</button>'+
+            '<button class="btn btn-ghost btn-sm" data-action="stockPlus" data-id="'+p.id+'">+</button>'+
             '</div>';
     html += '</div>';
   }
@@ -320,16 +322,8 @@ function htmlProductCard(p, editable){
 }
 
 function placeholder(){
-  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800">
-'+
-    '<defs><linearGradient id="g" x1="0" x2="1"><stop offset="0%" stop-color="#0b1224"/><stop offset="100%" stop-color="#111827"/></linearGradient></defs>
-'+
-    '<rect width="100%" height="100%" fill="url(#g)"/>
-'+
-    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, Roboto, Arial" font-size="28">Sin imagen</text>
-'+
-    '</svg>'
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0%" stop-color="#0b1224"/><stop offset="100%" stop-color="#111827"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, Roboto, Arial" font-size="28">Sin imagen</text></svg>'
   );
 }
 
@@ -453,7 +447,7 @@ function buildStaticHtml(data){
   '<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"/>'+
   '<meta name="viewport" content="width=device-width,initial-scale=1"/>'+
   '<title>Catálogo – '+esc(brandName)+'</title>'+
-  '<style>'+ 
+  '<style>'+
   'body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell, Noto Sans, Arial; background:#0f172a; color:#e5e7eb}'+
   '.wrap{max-width:1024px; margin:24px auto; padding:0 16px}'+
   '.hdr{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px}'+
@@ -474,12 +468,12 @@ function buildStaticHtml(data){
   '.oldprice{color:#94a3b8; text-decoration:line-through}'+
   '.discount-badge{background:#14532d; color:#bbf7d0; border:1px solid #166534; padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700}'+
   '@page{ size: Letter; margin:10mm }'+
-  '@media print{ *{-webkit-print-color-adjust:exact; print-color-adjust:exact} .grid{grid-template-columns:repeat(2,1fr)} .product{break-inside:avoid; page-break-inside:avoid; -webkit-column-break-inside:avoid} }'+
+  '@media print{ *{-webkit-print-color-adjust:exact; print-color-adjust:exact} .grid{grid-template-columns:repeat(2,1fr)} .product{break-inside:avoid; page-break-inside:avoid; -webkit-column-break-inside:avoid} .no-print{display:none!important} }'+
   '</style></head><body>'+
   '<div class="wrap">'+
   '<div class="hdr">'+logoHtml+'<div style="font-size:22px;font-weight:800">'+esc(brandName)+'</div>'+chips+'</div>'+
-  '<div class="grid">'+cards+'</div>'+ 
-  '<div class="no-print" style="margin-top:12px"><button onclick="window.print()">Imprimir / PDF</button></div>'+ 
+  '<div class="grid">'+cards+'</div>'+
+  '<div class="no-print" style="margin-top:12px"><button onclick="window.print()">Imprimir / PDF</button></div>'+
   '</div></body></html>';
   return html;
 }
@@ -490,9 +484,11 @@ function buildStaticHtml(data){
 function runTests(){
   var results = [];
   try{ if(fmtPrice(10)==='$10.00'){ results.push('✔ fmtPrice USD'); } else { results.push('✘ fmtPrice USD'); } }catch(e){ results.push('✘ fmtPrice USD threw'); }
+  try{ state.currency='EUR'; if(fmtPrice(10)==='€10.00'){ results.push('✔ fmtPrice EUR'); } else { results.push('✘ fmtPrice EUR'); } }catch(e){ results.push('✘ fmtPrice EUR threw'); } finally { state.currency='USD'; }
   try{ var pp = normalizePricing(80, 100, null, null); if(pp.oldPrice===100 && pp.discountPct===20 && Math.abs(pp.discountAmt-20)<0.01){ results.push('✔ old+now -> % & amt'); } else { results.push('✘ old+now'); } }catch(e){ results.push('✘ old+now threw'); }
   try{ var pp2 = normalizePricing(80, null, 20, null); if(pp2.oldPrice && Math.abs(pp2.oldPrice-100)<0.01 && pp2.discountPct===20){ results.push('✔ now+% -> old'); } else { results.push('✘ now+%'); } }catch(e){ results.push('✘ now+% threw'); }
   try{ var pp3 = normalizePricing(80, null, null, 20); if(pp3.oldPrice===100 && pp3.discountPct===20 && Math.abs(pp3.discountAmt-20)<0.01){ results.push('✔ now+amt -> old & %'); } else { results.push('✘ now+amt'); } }catch(e){ results.push('✘ now+amt threw'); }
+  try{ if(/^data:image\/svg\+xml/.test(placeholder())){ results.push('✔ placeholder data URL'); } else { results.push('✘ placeholder'); } }catch(e){ results.push('✘ placeholder threw'); }
   try{ var html = buildStaticHtml({products:[], currency:'USD', brand:{name:'X', showPct:true}}); if(html.indexOf('@page{ size: Letter;')>-1){ results.push('✔ buildStaticHtml Carta'); } else { results.push('✘ buildStaticHtml Carta'); } }catch(e){ results.push('✘ export threw'); }
   console.log('[Tests]', results.join(' | '));
   var hint = document.createElement('div'); hint.className='hint'; hint.textContent='Autotests: '+results.join(' | ');

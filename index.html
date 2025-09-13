@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestor de Catálogos – Offline</title>
+  <!-- Estructura separada: guarda este archivo como index.html en la misma carpeta que catalogo.css y catalogo.js -->
+  <link rel="stylesheet" href="catalogo.css" />
+</head>
+<body>
+  <header>
+    <h1>🛒 Gestor de Catálogos (local/offline)</h1>
+    <div class="grow"></div>
+    <div class="toolbar no-print">
+      <button class="btn btn-ghost" id="btnImportJson">Importar JSON</button>
+      <button class="btn btn-ghost" id="btnExportJson">Exportar JSON</button>
+      <button class="btn btn-accent" id="btnStatic">Descargar Catálogo HTML</button>
+      <button class="btn btn-primary" id="btnPrint">Exportar a PDF</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Información del catálogo</h2>
+      <div class="hint">Estos datos aparecen en el encabezado de tu catálogo público.</div>
+      <div class="brandbar">
+        <label class="pill">Nombre / Marca
+          <input id="brandName" placeholder="Mi Emprendimiento" />
+        </label>
+        <label class="pill">WhatsApp
+          <input id="brandPhone" placeholder="+503 7000-0000" />
+        </label>
+        <label class="pill">Correo
+          <input id="brandEmail" placeholder="ventas@ejemplo.com" />
+        </label>
+        <label class="pill">Moneda
+          <select id="currency">
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="SVC">SVC (₡)</option>
+            <option value="MXN">MXN ($)</option>
+          </select>
+        </label>
+        <label class="pill">Logo
+          <input id="brandLogo" type="file" accept="image/*" />
+        </label>
+        <img id="brandLogoPreview" class="logo-preview" alt="logo"/>
+        <button class="btn btn-danger btn-sm" id="btnClearLogo" title="Quitar logo">Quitar</button>
+        <label class="pill">Mostrar agotados
+          <span id="toggleSold" class="switch" role="switch" aria-checked="false"><span class="knob"></span></span>
+        </label>
+        <label class="pill">Mostrar %
+          <span id="togglePct" class="switch" role="switch" aria-checked="true"><span class="knob"></span></span>
+        </label>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Agregar / Editar producto</h2>
+        <div class="row">
+          <div>
+            <label>Nombre</label>
+            <input id="pName" placeholder="Cartera de cuero" />
+          </div>
+          <div>
+            <label>Categoría (opcional)</label>
+            <input id="pCategory" placeholder="Accesorios" />
+          </div>
+        </div>
+        <div class="row3">
+          <div>
+            <label>Precio actual</label>
+            <input id="pPrice" type="number" min="0" step="0.01" placeholder="19.99" />
+          </div>
+          <div>
+            <label>Precio anterior</label>
+            <input id="pOldPrice" type="number" min="0" step="0.01" placeholder="24.99" />
+          </div>
+          <div>
+            <label>Descuento (%)</label>
+            <input id="pDiscount" type="number" min="0" max="95" step="1" placeholder="20" />
+          </div>
+        </div>
+        <div class="row3">
+          <div>
+            <label>Descuento fijo (monto)</label>
+            <input id="pDiscountAmt" type="number" min="0" step="0.01" placeholder="5.00" />
+          </div>
+          <div>
+            <label>Stock (existencias)</label>
+            <input id="pStock" type="number" min="0" step="1" placeholder="10" />
+          </div>
+          <div>
+            <label>Estado</label>
+            <select id="pStatus">
+              <option value="available">Disponible</option>
+              <option value="sold">Vendido</option>
+              <option value="hidden">Oculto</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>SKU (opcional)</label>
+            <input id="pSku" placeholder="SKU-001" />
+          </div>
+          <div>
+            <label>Foto (JPG/PNG) – se optimiza automáticamente</label>
+            <input id="pImage" type="file" accept="image/*" />
+          </div>
+        </div>
+        <label>Descripción</label>
+        <textarea id="pDesc" placeholder="Breve descripción del producto…"></textarea>
+        <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn btn-primary" id="btnAdd">Guardar producto</button>
+          <button class="btn btn-ghost" id="btnClear">Limpiar</button>
+        </div>
+        <div class="hint" id="formHint"></div>
+      </section>
+
+      <section class="card">
+        <h2>Productos</h2>
+        <div class="row">
+          <input id="search" placeholder="Buscar por nombre, categoría o SKU…" />
+          <select id="sort">
+            <option value="newest">Más recientes</option>
+            <option value="name">Nombre (A→Z)</option>
+            <option value="priceAsc">Precio (menor a mayor)</option>
+            <option value="priceDesc">Precio (mayor a menor)</option>
+          </select>
+        </div>
+        <div class="products" id="list"></div>
+      </section>
+    </div>
+
+    <section class="card viewer">
+      <h2>Vista pública del catálogo</h2>
+      <div class="hint">Así lo verán tus clientes. Usa <b>Exportar a PDF</b> para generar un archivo listo para compartir.</div>
+
+      <div id="publicHeader" class="public-header">
+        <img id="vhLogo" class="logo-preview" alt="logo" style="display:none"/>
+        <div class="brand-title" id="vhBrand">Mi Emprendimiento</div>
+        <div class="chip" id="vhPhone">📱 +503 7000-0000</div>
+        <div class="chip" id="vhEmail">✉️ ventas@ejemplo.com</div>
+      </div>
+
+      <div class="catalog-grid" id="catalog"></div>
+    </section>
+  </main>
+
+  <div class="sticky-footer no-print">
+    <button class="btn btn-primary" id="btnPrint2">Imprimir / PDF</button>
+  </div>
+
+  <input id="hiddenFile" type="file" accept="application/json" style="display:none" />
+
+  <!-- JS externo -->
+  <script src="catalogo.js"></script>
+
+</body>
+</html>

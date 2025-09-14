@@ -1,69 +1,159 @@
-:root{ --bg:#0f172a; --panel:#111827; --muted:#334155; --text:#e5e7eb; --brand:#22c55e; --accent:#38bdf8; --danger:#ef4444; --card:#0b1224; --chip:#1e293b; --strike:#94a3b8; }
-*{box-sizing:border-box} html,body{height:100%}
-body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; background:linear-gradient(180deg, var(--bg), #050816); color:var(--text); }
-header{ position:sticky; top:0; z-index:10; background:rgba(15,23,42,.8); backdrop-filter:saturate(180%) blur(8px); border-bottom:1px solid #1f2937; padding:12px 16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-header h1{font-size:18px; margin:0; font-weight:700; letter-spacing:.2px} header .grow{flex:1}
+/* ======================== */
+/* Paleta y modo UI global  */
+/* ======================== */
+
+:root{
+  /* Dark por defecto (se pueden sobrescribir por data-ui="light") */
+  --bg:#0f172a;
+  --panel:#111827;
+  --card:#0b1224;
+  --text:#e5e7eb;
+  --muted:#93a3b8;
+
+  --border:#1f2937;
+  --chip:#1e293b;
+  --strike:#94a3b8;
+
+  /* Paleta (se cambia por data-palette="...") */
+  --brand:#3b82f6;   /* azul */
+  --accent:#60a5fa;
+  --danger:#ef4444;
+}
+
+/* Modo claro */
+body[data-ui="light"]{
+  --bg:#f5f7fb;
+  --panel:#ffffff;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#475569;
+
+  --border:#e2e8f0;
+  --chip:#eef2f7;
+  --strike:#64748b;
+}
+
+/* Paletas de color */
+body[data-palette="blue"] { --brand:#3b82f6; --accent:#60a5fa; }
+body[data-palette="green"]{ --brand:#22c55e; --accent:#34d399; }
+body[data-palette="teal"] { --brand:#14b8a6; --accent:#2dd4bf; }
+body[data-palette="purple"]{--brand:#a78bfa; --accent:#c4b5fd; }
+body[data-palette="amber"]{ --brand:#f59e0b; --accent:#fbbf24; }
+body[data-palette="coral"]{ --brand:#fb7185; --accent:#fda4af; }
+body[data-palette="slate"]{ --brand:#64748b; --accent:#94a3b8; }
+
+/* ======================== */
+/* Layout y componentes     */
+/* ======================== */
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  background:linear-gradient(180deg, var(--bg), color-mix(in oklab, var(--bg) 85%, black 15%));
+  color:var(--text);
+}
+
+header{
+  position:sticky; top:0; z-index:10;
+  background:color-mix(in oklab, var(--bg) 86%, black 14%);
+  backdrop-filter:saturate(160%) blur(8px);
+  border-bottom:1px solid var(--border);
+  padding:12px 16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+}
+header h1{font-size:18px; margin:0; font-weight:700; letter-spacing:.2px}
+header .grow{flex:1}
+
 .btn{appearance:none; border:none; padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer; transition:.15s transform ease,.15s background ease}
 .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(0)}
-.btn-primary{background:var(--brand); color:#06220f} .btn-accent{background:var(--accent); color:#041018}
-.btn-ghost{background:#0b1224; color:#cbd5e1; border:1px solid #1f2937} .btn-danger{background:var(--danger); color:#fff}
+.btn-primary{background:var(--brand); color:#081225}
+.btn-accent{background:var(--accent); color:#061018}
+.btn-ghost{
+  background:color-mix(in oklab, var(--card) 94%, white 6%);
+  color:color-mix(in oklab, var(--text) 80%, #cbd5e1 20%);
+  border:1px solid var(--border)
+}
+.btn-danger{background:var(--danger); color:#fff}
 .btn-sm{padding:6px 10px; border-radius:10px; font-size:12px}
+
 .toolbar{display:flex; gap:8px; flex-wrap:wrap}
 main{max-width:1200px; margin:20px auto; padding:0 16px 64px}
 .grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
 @media (max-width: 900px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card); border:1px solid #1f2937; border-radius:16px; padding:16px}
+
+.card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px}
 .card h2{margin:0 0 8px; font-size:18px}
-.hint{color:#93a3b8; font-size:12px}
-label{display:block; font-size:13px; color:#a1a1aa; margin:12px 0 6px}
-input, textarea, select{width:100%; background:#0b1224; border:1px solid #1f2937; color:#e5e7eb; padding:10px 12px; border-radius:12px}
+.hint{color:var(--muted); font-size:12px}
+label{display:block; font-size:13px; color:color-mix(in oklab, var(--text) 70%, #a1a1aa 30%); margin:12px 0 6px}
+input, textarea, select{
+  width:100%; background:color-mix(in oklab, var(--card) 94%, white 6%);
+  border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:12px
+}
 textarea{min-height:84px; resize:vertical}
+
 .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+
 .products{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px}
 @media (max-width: 1100px){.products{grid-template-columns:repeat(2, 1fr)}}
 @media (max-width: 640px){.products{grid-template-columns:1fr}}
-.product{position:relative; background:#0b1224; border:1px solid #1f2937; border-radius:16px; overflow:hidden; display:flex; flex-direction:column}
-.product img{width:100%; aspect-ratio:1/1; object-fit:cover; background:#0a0f1f}
+
+.product{position:relative; background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; display:flex; flex-direction:column}
+.product img{width:100%; aspect-ratio:1/1; object-fit:cover; background:color-mix(in oklab, var(--card) 70%, black 30%)}
 .product .pbody{padding:12px} .product h3{margin:0 0 6px; font-size:16px}
+
 .price{font-weight:800; font-size:18px}
 .price-line{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
 .oldprice{color:var(--strike); text-decoration:line-through}
-.discount-badge{background:#14532d; color:#bbf7d0; border:1px solid #166534; padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700}
-.muted{color:#9aa9c3; font-size:12px}
+.discount-badge{
+  background:color-mix(in oklab, var(--brand) 35%, black 65%);
+  color:color-mix(in oklab, var(--brand) 95%, white 5%);
+  border:1px solid color-mix(in oklab, var(--brand) 55%, black 45%);
+  padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700
+}
+
+.muted{color:var(--muted); font-size:12px}
 .chips{display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 0}
-.chip{background:var(--chip); color:#cbd5e1; padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid #1f2937}
-.product .actions{display:flex; gap:8px; padding:12px; border-top:1px solid #1f2937}
+.chip{background:var(--chip); color:color-mix(in oklab, var(--text) 85%, #cbd5e1 15%); padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid var(--border)}
+
+.product .actions{display:flex; gap:8px; padding:12px; border-top:1px solid var(--border)}
 .sold-overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none}
-.sold-overlay span{font-weight:900; font-size:38px; letter-spacing:4px; color:rgba(239,68,68,.22); transform:rotate(-18deg); border:4px solid rgba(239,68,68,.25); padding:8px 14px; border-radius:12px; backdrop-filter:blur(1px)}
+.sold-overlay span{
+  font-weight:900; font-size:38px; letter-spacing:4px;
+  color:color-mix(in oklab, var(--danger) 45%, transparent 55%);
+  transform:rotate(-18deg); border:4px solid color-mix(in oklab, var(--danger) 40%, transparent 60%);
+  padding:8px 14px; border-radius:12px; backdrop-filter:blur(1px)
+}
+
 .viewer{margin-top:24px}
 .viewer .catalog-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:12px}
-.pill{display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; background:#0b1224; border:1px solid #1f2937}
-.switch{position:relative; width:42px; height:24px; background:#0b1224; border:1px solid #1f2937; border-radius:999px; cursor:pointer}
-.knob{position:absolute; top:2px; left:2px; width:18px; height:18px; background:#cbd5e1; border-radius:999px; transition:.2s}
+
+.pill{display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:999px; background:color-mix(in oklab, var(--card) 94%, white 6%); border:1px solid var(--border)}
+.switch{position:relative; width:42px; height:24px; background:color-mix(in oklab, var(--card) 90%, white 10%); border:1px solid var(--border); border-radius:999px; cursor:pointer}
+.knob{position:absolute; top:2px; left:2px; width:18px; height:18px; background:color-mix(in oklab, var(--text) 86%, white 14%); border-radius:999px; transition:.2s}
 .switch[data-on="true"]{background:var(--brand); border-color:var(--brand)}
 .switch[data-on="true"] .knob{left:22px; background:#06220f}
+
 .brandbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
 .brandbar input{width:auto}
-.logo-preview{width:44px; height:44px; border-radius:12px; border:1px solid #1f2937; background:#0a0f1f; object-fit:cover}
+.logo-preview{width:44px; height:44px; border-radius:12px; border:1px solid var(--border); background:color-mix(in oklab, var(--card) 70%, black 30%); object-fit:cover}
 .public-header{margin:16px 0; display:flex; gap:14px; align-items:center; flex-wrap:wrap}
 .brand-title{font-size:22px; font-weight:800}
 .sticky-footer{position:fixed; right:16px; bottom:16px; display:flex; gap:8px}
 
-/* === Reglas de impresión (Carta) === */
+/* ======================== */
+/* Impresión tamaño Carta   */
+/* ======================== */
 @page { size: Letter; margin: 10mm; }
 @media print {
-  /* Máxima fidelidad de color/contraste en impresión */
   *{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body{ background:#fff !important }
-  /* Ocultar todo excepto la sección de catálogo (.viewer) */
+  /* Solo imprimir la vista pública del catálogo */
   body *{ visibility: hidden !important; }
   .viewer, .viewer *{ visibility: visible !important; }
   .viewer{ position: static !important; }
-  /* Ocultar elementos no deseados y sticks */
   header, .sticky-footer, .no-print, .no-print-tip{ display:none !important }
-  /* Layout de 2 columnas en Carta */
   .viewer .catalog-grid{ grid-template-columns:repeat(2,1fr) !important; gap:12px }
-  /* Evitar cortes de tarjeta entre páginas */
   .product, .card{ break-inside: avoid; page-break-inside: avoid; -webkit-column-break-inside: avoid; }
 }

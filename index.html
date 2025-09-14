@@ -1,16 +1,34 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-palette="blue">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestor de Catálogos – Offline</title>
   <link rel="stylesheet" href="catalogo.css" />
 </head>
-<body>
+<body data-ui="dark" data-palette="blue">
   <header>
     <h1>🛒 Gestor de Catálogos (local/offline)</h1>
     <div class="grow"></div>
+
+    <!-- Controles de tema (afectan UI y catálogo/export) -->
     <div class="toolbar no-print">
+      <label class="pill">Tema
+        <select id="themePalette">
+          <option value="blue">Azul</option>
+          <option value="green">Verde</option>
+          <option value="teal">Turquesa</option>
+          <option value="purple">Morado</option>
+          <option value="amber">Ámbar</option>
+          <option value="coral">Coral</option>
+          <option value="slate">Pizarra</option>
+        </select>
+      </label>
+      <label class="pill">Modo claro
+        <span id="uiMode" class="switch" role="switch" aria-checked="false">
+          <span class="knob"></span>
+        </span>
+      </label>
       <button class="btn btn-ghost" id="btnImportJson">Importar JSON</button>
       <button class="btn btn-ghost" id="btnExportJson">Exportar JSON</button>
       <button class="btn btn-accent" id="btnStatic">Descargar Catálogo HTML</button>

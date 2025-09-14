@@ -1,34 +1,40 @@
 <!DOCTYPE html>
-<html lang="es" data-palette="blue">
+<html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestor de Catálogos – Offline</title>
   <link rel="stylesheet" href="catalogo.css" />
 </head>
-<body data-ui="dark" data-palette="blue">
+<body data-ui="light">
   <header>
     <h1>🛒 Gestor de Catálogos (local/offline)</h1>
     <div class="grow"></div>
 
-    <!-- Controles de tema (afectan UI y catálogo/export) -->
     <div class="toolbar no-print">
-      <label class="pill">Tema
-        <select id="themePalette">
-          <option value="blue">Azul</option>
-          <option value="green">Verde</option>
-          <option value="teal">Turquesa</option>
-          <option value="purple">Morado</option>
-          <option value="amber">Ámbar</option>
-          <option value="coral">Coral</option>
-          <option value="slate">Pizarra</option>
-        </select>
-      </label>
-      <label class="pill">Modo claro
+      <!-- Ahora el switch controla "modo oscuro" (apagado = claro por defecto) -->
+      <label class="pill">Modo oscuro
         <span id="uiMode" class="switch" role="switch" aria-checked="false">
           <span class="knob"></span>
         </span>
       </label>
+
+      <label class="pill">Tema del catálogo
+        <select id="catalogTheme">
+          <option value="blanco">Blanco</option>
+          <option value="rosado">Rosado (pastel)</option>
+          <option value="lavanda">Lavanda (pastel)</option>
+          <option value="menta">Menta (pastel)</option>
+          <option value="cielo" selected>Cielo (pastel)</option>
+          <option value="arena">Arena (suave)</option>
+          <option value="coral">Coral (vibrante)</option>
+          <option value="lima">Lima (vibrante)</option>
+          <option value="uva">Uva (pastel)</option>
+          <option value="pizarra">Pizarra (suave)</option>
+          <option value="vibrante">Vibrante (oscuro)</option>
+        </select>
+      </label>
+
       <button class="btn btn-ghost" id="btnImportJson">Importar JSON</button>
       <button class="btn btn-ghost" id="btnExportJson">Exportar JSON</button>
       <button class="btn btn-accent" id="btnStatic">Descargar Catálogo HTML</button>
@@ -62,7 +68,7 @@
           <input id="brandLogo" type="file" accept="image/*" />
         </label>
         <img id="brandLogoPreview" class="logo-preview" alt="logo"/>
-        <button class="btn btn-danger btn-sm" id="btnClearLogo" title="Quitar logo">Quitar</button>
+        <button class="btn btn-danger btn-xs" id="btnClearLogo" title="Quitar logo">Quitar</button>
         <label class="pill">Mostrar agotados
           <span id="toggleSold" class="switch" role="switch" aria-checked="false"><span class="knob"></span></span>
         </label>
@@ -129,7 +135,7 @@
         </div>
         <label>Descripción</label>
         <textarea id="pDesc" placeholder="Breve descripción del producto…"></textarea>
-        <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
+        <div class="actions-form">
           <button class="btn btn-primary" id="btnAdd">Guardar producto</button>
           <button class="btn btn-ghost" id="btnClear">Limpiar</button>
         </div>
@@ -151,7 +157,8 @@
       </section>
     </div>
 
-    <section class="card viewer">
+    <!-- Vista pública con tema de catálogo -->
+    <section class="card viewer" id="viewer" data-theme="cielo">
       <h2>Vista pública del catálogo</h2>
       <div class="hint no-print-tip">Para PDF nítido en Chrome: desactiva <b>Encabezados y pies de página</b> y usa <b>Escala 100%</b>.</div>
 

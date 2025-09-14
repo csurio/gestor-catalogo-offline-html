@@ -2,7 +2,6 @@
 /* UI limpia (light default) */
 /* ========================= */
 :root{
-  /* Tamaño unificado de controles del HEADER */
   --ctl-h: 40px;
 
   /* Modo claro por defecto */
@@ -15,7 +14,7 @@
   --ui-border:#e6ebf2;
   --ui-chip:#eef2f7;
 
-  /* Paleta de UI */
+  /* Paleta UI */
   --ui-primary:#1f2937;      /* carbón */
   --ui-primary-ink:#ffffff;
   --ui-accent:#16a34a;       /* verde accesible */
@@ -75,8 +74,11 @@ header .grow{flex:1}
 .btn-accent{background:var(--ui-accent); color:var(--ui-accent-ink)}
 .btn-ghost{background:var(--ui-surface-2); color:color-mix(in oklab, var(--ui-text) 80%, #a3afc4 20%); border:1px solid var(--ui-border)}
 .btn-danger{background:var(--ui-danger); color:#fff}
-.btn-xs,.btn-sm{height:28px; padding:0 10px; border-radius:9px; font-size:12px}
+.btn-xs,.btn-sm{height:32px; padding:0 10px; border-radius:9px; font-size:12px}
+.btn-compact{height:30px; padding:0 10px; border-radius:8px; font-size:12px}
+.actions .btn-sm{min-width:96px}
 
+/* Cápsulas y selects */
 .pill{
   display:inline-flex; align-items:center; gap:10px; padding:0 12px;
   border-radius:999px; background:var(--ui-surface-2); border:1px solid var(--ui-border);
@@ -89,16 +91,27 @@ header .grow{flex:1}
 }
 
 /* Switch */
-.switch{position:relative; width:42px; height:24px; background:var(--ui-card); border:1px solid var(--ui-border); border-radius:999px; cursor:pointer}
-.knob{position:absolute; top:2px; left:2px; width:18px; height:18px; background:#cbd5e1; border-radius:999px; transition:.2s}
+.switch{
+  position:relative; width:42px; height:24px;
+  background:var(--ui-card); border:1px solid var(--ui-border);
+  border-radius:999px; cursor:pointer; transition:.15s;
+}
+.switch .knob{position:absolute; top:2px; left:2px; width:18px; height:18px; background:#cbd5e1; border-radius:999px; transition:.2s}
 .switch[data-on="true"]{background:var(--ui-primary); border-color:var(--ui-primary)}
 .switch[data-on="true"] .knob{left:22px; background:#06220f}
+/* Variante verde para switches de “Mostrar …” */
+.switch[data-variant="success"][data-on="true"]{
+  background:var(--ui-accent); border-color:var(--ui-accent);
+}
+.switch.switch-sm{ width:36px; height:20px }
+.switch.switch-sm .knob{ width:16px; height:16px; top:2px; left:2px }
+.switch.switch-sm[data-on="true"] .knob{ left:18px }
 
 /* ======= Contenido ======= */
 main{max-width:1200px; margin:20px auto 80px; padding:0 16px}
 
 /* Separaciones consistentes entre secciones */
-main > .card{ margin-bottom: 18px; }      /* entre el primer card y lo que siga */
+main > .card{ margin-bottom: 18px; }
 .grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-block:18px; }
 @media (max-width: 980px){.grid{grid-template-columns:1fr}}
 .card{
@@ -121,6 +134,9 @@ textarea{min-height:84px; resize:vertical}
 .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
 .actions-form{margin-top:12px; display:flex; gap:8px; flex-wrap:wrap}
 
+/* >>> padding entre filtros y tarjetas */
+.row-filters{ margin-bottom: 12px; }
+
 /* Productos (admin) */
 .products{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px}
 @media (max-width: 1100px){.products{grid-template-columns:repeat(2, 1fr)}}
@@ -131,23 +147,43 @@ textarea{min-height:84px; resize:vertical}
   border-radius:14px; overflow:hidden; display:flex; flex-direction:column
 }
 .products .product img{width:100%; aspect-ratio:1/1; object-fit:cover; background:#eef2f7}
-.product .pbody{padding:12px}
-.product h3{margin:0 0 6px; font-size:15px}
+.product .pbody{padding:12px; display:flex; flex-direction:column; gap:6px}
+.product h3{margin:0 0 4px; font-size:15px}
 
-/* Acciones dentro de tarjeta (compactas) */
-.product .actions{
-  display:flex; gap:6px; padding:10px; border-top:1px solid var(--ui-border);
-  align-items:center; flex-wrap:wrap
+/* línea de precios y meta más estilizados */
+.price-line{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
+.before-block{ display:inline-flex; align-items:baseline; gap:6px; white-space:nowrap }
+.now-row{ display:inline-flex; align-items:baseline; gap:8px; white-space:nowrap } /* “Ahora” + % juntos */
+.now-block{ display:inline-flex; align-items:baseline; gap:6px; white-space:nowrap }
+.label-before{ color:#77829a; font-weight:700; font-size:12px }
+.label-now{ color:var(--ui-primary); font-weight:800; font-size:12px }
+.price{ font-weight:800 }
+.oldprice{ color:#64748b; text-decoration:line-through }
+.discount-badge{ background:#e7f5ea; color:#14532d; border:1px solid #ccead4; padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700 }
+
+/* categoría + descripción elegante (más delicada) */
+.category-chip{background:var(--ui-chip);color:#334155;border:1px solid var(--ui-border);padding:2px 8px;border-radius:999px;font-size:12px;width:max-content}
+.product .desc{
+  color:var(--ui-muted);
+  font-size:12px; line-height:1.45; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden
 }
-.product .actions .btn{box-shadow:none}
 
-/* Chips admin */
+/* chips */
+.product .chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px}
 .chip{background:var(--ui-chip); color:var(--ui-text); padding:3px 8px; border-radius:999px; font-size:12px; border:1px solid var(--ui-border)}
 .chip-success{background:#e7f7ea; color:#176a2f; border-color:#bfe8c8}
 .chip-danger{background:#fee2e2; color:#991b1b; border-color:#fecaca}
 .chip-muted{background:#eef2f7; color:#334155; border-color:#e2e8f0}
 
-/* Vista pública (catálogo) con buen contraste de chips/badges por tema */
+/* Acciones: una sola línea – compactas y que llenen el ancho */
+.product .actions{
+  border-top:1px solid var(--ui-border);
+  padding:8px;
+  display:flex; gap:8px; align-items:center;
+}
+.product .actions .btn{ flex:1; min-width:0 } /* mismo ancho */
+
+/* ============ Vista pública (catálogo) (sin cambios del pedido) ============ */
 .viewer{ --cat-bg:#0f172a; --cat-card:#0b1224; --cat-text:#e5e7eb; --cat-muted:#93a3b8;
   --cat-border:#1f2937; --cat-chip-bg:#1e293b; --cat-chip-fg:#e5e7eb; --cat-strike:#94a3b8;
   --cat-brand:#22d3ee; --cat-badge-bg:#14532d; --cat-badge-fg:#bbf7d0; --cat-badge-border:#166534;
@@ -162,14 +198,22 @@ textarea{min-height:84px; resize:vertical}
 .viewer .chip{ background:var(--cat-chip-bg); color:var(--cat-chip-fg); padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid var(--cat-border) }
 .viewer .price{ font-weight:800; font-size:18px; color:var(--cat-text) }
 .viewer .price-line{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
+.viewer .before-block,.viewer .now-block{ display:inline-flex; align-items:baseline; gap:6px; white-space:nowrap }
 .viewer .oldprice{ color:var(--cat-strike); text-decoration:line-through }
 .viewer .discount-badge{ background:var(--cat-badge-bg); color:var(--cat-badge-fg); border:1px solid var(--cat-badge-border);
   padding:2px 8px; border-radius:999px; font-size:12px; font-weight:700 }
 .viewer .sold-overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none}
 .viewer .sold-overlay span{font-weight:900; font-size:38px; letter-spacing:4px; color:rgba(239,68,68,.22); transform:rotate(-18deg);
   border:4px solid rgba(239,68,68,.25); padding:8px 14px; border-radius:12px; backdrop-filter:blur(1px)}
+.viewer .pbody{padding:12px; display:flex; flex-direction:column; gap:6px}
+.viewer .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
 
-/* Temas del catálogo (con contraste de chips/badges) */
+/* Descripción pública: clamp + ver más */
+.viewer .desc-public{ color:var(--cat-muted); line-height:1.5; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden }
+.viewer .desc-public.expanded{ -webkit-line-clamp:unset; overflow:visible }
+.viewer .link-more{ background:none; border:none; color:var(--cat-brand); font-weight:700; cursor:pointer; padding:0; width:max-content }
+
+/* ===== Temas del catálogo (variables CSS) ===== */
 .viewer[data-theme="blanco"]{
   --cat-bg:#ffffff; --cat-card:#ffffff; --cat-text:#0f172a; --cat-muted:#475569;
   --cat-border:#e2e8f0; --cat-chip-bg:#eef2f7; --cat-chip-fg:#1f2937; --cat-strike:#64748b;
